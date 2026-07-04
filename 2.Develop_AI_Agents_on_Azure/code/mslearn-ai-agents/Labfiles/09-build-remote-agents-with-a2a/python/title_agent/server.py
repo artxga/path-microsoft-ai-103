@@ -18,19 +18,42 @@ host = os.environ["SERVER_URL"]
 port = os.environ["TITLE_AGENT_PORT"]
 
 # Define agent skills
-
+skills = [
+    AgentSkill(
+        id='generate_blog_title',
+        name='Generate Blog Title',
+        description='Generates a blog title based on a topic',
+        tags=['title'],
+        examples=[
+            'Can you give me a blog title for this article?',
+        ]
+    )
+]
 
 # Create agent card
-
+agent_card = AgentCard(
+    name='Microsoft AI Foundry Title Agent',
+    description='An intelligent blog title generator' 'I can help you generate catchy titles for your articles',
+    url='https://{host}:{port}/',
+    version='1.0.0',
+    default_input_modes=['text'],
+    default_output_modes=['text'],
+    capabilities=AgentCapabilities(),
+    skills=skills,
+)
 
 # Create agent executor
-
+agent_executor = create_foundry_agent_executor(agent_card)
 
 # Create request handler
-
+request_handler = DefaultRequestHandler(
+    agent_executor=agent_executor, task_store=InMemoryTaskStore()
+)
 
 # Create A2A application
-
+a2a_app = A2AStarletteApplication(
+    agent_card=agent_card, http_handler=request_handler
+)
 
 # Get routes
 routes = a2a_app.routes()
