@@ -1,0 +1,806 @@
+{
+  "id": "resp_0551936fdd877be6006a48976ba5f08194af968dfa731dee87",
+  "created_at": 1783142251.0,
+  "error": null,
+  "incomplete_details": null,
+  "instructions": "You are an AI agent that assists users by helping them analyze text. Use the Azure Language tool to perform text analysis tasks.",
+  "metadata": {},
+  "model": "gpt-5.4-mini-3",
+  "object": "response",
+  "output": [
+    {
+      "id": "mcpl_0551936fdd877be6006a48976bbbcc8194b660316cc2625429",
+      "server_label": "AzureLanguageinFoundryTools",
+      "tools": [
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "sourceDocument": {
+                "type": "string",
+                "description": "The Uri of the storage blob to be redacted.",
+                "properties": {},
+                "required": []
+              },
+              "targetContainer": {
+                "type": "string",
+                "description": "The Uri of the storage container where the redacted document and results will be stored",
+                "properties": {},
+                "required": []
+              },
+              "piiCategories": {
+                "type": "array",
+                "description": "(Optional) The list of PII Categories to be redacted. The PII Categories allowed are string representations of the enum PiiCategoryEnum. Default is an empty list",
+                "properties": {},
+                "default": null,
+                "required": [],
+                "items": {
+                  "type": "string",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "excludePiiCategories": {
+                "type": "array",
+                "description": "(Optional) The list of Pii categories to be excluded from redaction. The PII Categories allowed are string representations of the enum PiiCategoryEnum. Default is empty list.",
+                "properties": {},
+                "default": null,
+                "required": [],
+                "items": {
+                  "type": "string",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "redactionPolicy": {
+                "type": "string",
+                "description": "(Optional) PII redaction policy. Allowed values are EntityMask, CharacterMask and NoMask",
+                "properties": {},
+                "default": "CharacterMask",
+                "required": []
+              },
+              "redactionCharacter": {
+                "type": "string",
+                "description": "(Optional) Redaction character to be used to mask the PII. Default is *. Other supported characters are $,!,#,%,&,+,-,=,?,@,^,-,~",
+                "properties": {},
+                "default": "*",
+                "required": []
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional) The language of the input text.  The language requested should be according to the 2 letter ISO 639-1 standard.",
+                "properties": {},
+                "default": "en",
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              }
+            },
+            "required": [
+              "sourceDocument",
+              "targetContainer"
+            ]
+          },
+          "name": "redact_pii_from_document",
+          "annotations": {},
+          "description": "This tool detects PII from word and PDF documents in Azure Storage blobs and redacts it to remove PII. It requires the source and destination urls but can accept optional parameters like entity types to be redacted, entity types to be excluded, redaction policy to be used. Results are returned as a JSON array of documents containing the location of the redacted documents."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The text that needs to be used for analysis",
+                "properties": {},
+                "required": []
+              },
+              "inclusionList": {
+                "type": "array",
+                "description": "(Optional) The list of type of entities to be included in the response. The allowed values are string representations of the enum NerTypeEnum. Default is an empty list. Make sure you map the values to the types in the enum as incorrect mappings will cause the system to throw an error.",
+                "properties": {},
+                "default": null,
+                "required": [],
+                "items": {
+                  "type": "string",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "exclusionList": {
+                "type": "array",
+                "description": "(Optional) The list of entity types to be excluded. The types allowed are string representations of the enum NerTypeEnum. Default is empty list.",
+                "properties": {},
+                "default": null,
+                "required": [],
+                "items": {
+                  "type": "string",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "overlapPolicy": {
+                "type": "string",
+                "description": "(Optional) Entity overlap policy allowed values: AllowOverlap, MatchLongest(default)",
+                "properties": {},
+                "default": null,
+                "required": []
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional) The language of the input text. The language requested should be according to the 2 letter ISO 639-1 standard.",
+                "properties": {},
+                "default": "en",
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              }
+            },
+            "required": [
+              "message"
+            ]
+          },
+          "name": "extract_named_entities_from_text",
+          "annotations": {},
+          "description": "This tool extracts entities from the text input and returns an array of entities.It requires the message but can accept optional parameters like - entity types to be includes, - entity types to be excluded, - entity overlap policy to be used. Results are returned as a JSON array of entities. Return the response as is and don't add additional entities."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "description": "Query string against the knowledge base.",
+                "properties": {},
+                "required": []
+              },
+              "textDocuments": {
+                "type": "array",
+                "description": "A collection of text documents to query against.",
+                "properties": {},
+                "required": [],
+                "items": {
+                  "type": "string",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional)The language of the text documents. This is the BCP-47: https://tools.ietf.org/rfc/bcp/bcp47.txt representation of a language. See https://docs.microsoft.com/azure/cognitive-services/qnamaker/overview/language-support for list of currently supported languages. Default 'en' for English",
+                "properties": {},
+                "default": "en",
+                "required": []
+              }
+            },
+            "required": [
+              "question",
+              "textDocuments"
+            ]
+          },
+          "name": "get_answers_from_text",
+          "annotations": {},
+          "description": "This tool answers questions using the list of input text provided in the request.\nIt requires the question text and a collection of text documents (as string values) to be queried.\nOptionally, it accepts the language of the text documents in BCP-47 format (for example, en for English or es for Spanish).\nResults are returned as a JSON array of answer objects, each containing the answer text, its confidence score, the sentence offset from the start of the document, the sentence length, and the index position of the document in the input list."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The text that needs to be redated",
+                "properties": {},
+                "required": []
+              },
+              "piiCategories": {
+                "type": "array",
+                "description": "(Optional) The list of Pii Categories to be redacted. The PII Categories allowed are string representations of the enum PiiCategoryEnum. Default is an empty list",
+                "properties": {},
+                "default": null,
+                "required": [],
+                "items": {
+                  "type": "string",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "excludePiiCategories": {
+                "type": "array",
+                "description": "(Optional) The list of Pii categories to be excluded from redaction. The PII Categories allowed are string representations of the enum PiiCategoryEnum. Default is empty list.",
+                "properties": {},
+                "default": null,
+                "required": [],
+                "items": {
+                  "type": "string",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "redactionPolicy": {
+                "type": "string",
+                "description": "(Optional) PII redaction policy kind which is the string implementation of the RedactionPolicyEnum.",
+                "properties": {},
+                "default": null,
+                "required": []
+              },
+              "redactionCharacter": {
+                "type": "string",
+                "description": "(Optional) Redaction character to be used to mask the PII. Default is *. Other supported characters are $,!,#,%,&,+,-,=,?,@,^,-,~",
+                "properties": {},
+                "default": "*",
+                "required": []
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional) The language of the input text. The language requested should be according to the 2 letter ISO 639-1 standard.",
+                "properties": {},
+                "default": "en",
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              }
+            },
+            "required": [
+              "message"
+            ]
+          },
+          "name": "redact_pii_from_text",
+          "annotations": {},
+          "description": "This tool detects PII from the text input and redacts it to remove PII and returns it. It requires the message but can accept optional parameters like entity types to be redacted, entity types to be excluded, redaction policy to be used. Results are returned as a JSON array of documents"
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "(Required) The text that needs to be used for analysis",
+                "properties": {},
+                "required": []
+              },
+              "healthcareDocumentTypeStr": {
+                "type": "string",
+                "description": "(Optional) The healthcare document type to be used. The allowed values are string representation of the enum HealthcareDocumentTypeEnum. Default to None if not provided.",
+                "properties": {},
+                "default": "None",
+                "required": []
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional) The language of the input text. The language requested should be according to the 2 letter ISO 639-1 standard.",
+                "properties": {},
+                "default": "en",
+                "required": []
+              },
+              "fhirVersion": {
+                "type": "string",
+                "description": "(Optional) The Fast Healthcare Interoperability Resources (FHIR) version. Default is set to 4.0.1",
+                "properties": {},
+                "default": "4.0.1",
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              }
+            },
+            "required": [
+              "message"
+            ]
+          },
+          "name": "extract_healthcare_entities_from_text",
+          "annotations": {},
+          "description": "This tool extracts healthcare entities from the text input and returns an array of entities.It requires the message to extract entities from. It also accepts optional parameters like document types, fhir version. Results are returned as a JSON array of entities. Return the response as is and don't add additional entities."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The text that needs to be used for analysis",
+                "properties": {},
+                "required": []
+              },
+              "opinionMining": {
+                "type": "boolean",
+                "description": "(Optional) Whether to include opinion mining in the analysis. Default set to true.",
+                "properties": {},
+                "default": true,
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional) The language of the input text.  The language requested should be according to the 2 letter ISO 639-1 standard.",
+                "properties": {},
+                "default": "en",
+                "required": []
+              }
+            },
+            "required": [
+              "message"
+            ]
+          },
+          "name": "detect_sentiment_from_text",
+          "annotations": {},
+          "description": "This tool detects the sentiment from the input text.It also accepts an optional model version and country hint. The result is a json response containing the detected sentiment."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The text that needs to be used for analysis",
+                "properties": {},
+                "required": []
+              },
+              "project": {
+                "type": "string",
+                "description": "The name of the project to use for analysis",
+                "properties": {},
+                "required": []
+              },
+              "deployment": {
+                "type": "string",
+                "description": "The name of the deployment to use for analysis",
+                "properties": {},
+                "required": []
+              }
+            },
+            "required": [
+              "message",
+              "project",
+              "deployment"
+            ]
+          },
+          "name": "detect_intent",
+          "annotations": {},
+          "description": "This tool detects intents and entities in conversations. This tool requires the conversation message to analyze, the project name and the deployment name. Results are returned as a JSON representation containing the top intent and entities. Return the response as is and don't add additional entities."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The text that needs to be used for summarization",
+                "properties": {},
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional) The language of the input text.  The language requested should be according to the 2 letter ISO 639-1 standard.",
+                "properties": {},
+                "default": "en",
+                "required": []
+              },
+              "summarizationType": {
+                "type": "string",
+                "description": "(Optional) The type of summarization - extractive of abstractive. Default is abstractive.",
+                "properties": {},
+                "default": "abstractive",
+                "required": []
+              },
+              "summaryLengthBucket": {
+                "type": "string",
+                "description": "(Optional) The length of the summary - short, medium, or long. Default is medium.",
+                "properties": {},
+                "default": "medium",
+                "required": []
+              },
+              "sentenceCount": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "(Optional) The number of sentences to include in the summary. Default is null (no limit).",
+                "properties": {},
+                "default": null,
+                "required": []
+              }
+            },
+            "required": [
+              "message"
+            ]
+          },
+          "name": "summarize_text",
+          "annotations": {},
+          "description": "This tool generates a summary for any text and returns it. It requires the message to be summarized, and optionally accepts parameters like model version, language, summarization type, summary length bucket, and sentence count.Results are returned as a JSON array of documents containing the summary."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "description": "Query string against the knowledge base.",
+                "properties": {},
+                "required": []
+              },
+              "project": {
+                "type": "string",
+                "description": "The name of the project to use for querying",
+                "properties": {},
+                "required": []
+              },
+              "deployment": {
+                "type": "string",
+                "description": "The name of the deployment to use for querying. Default to 'production'",
+                "properties": {},
+                "default": "production",
+                "required": []
+              },
+              "top": {
+                "type": "integer",
+                "description": "(Optional) Max number of answers to be returned for the question. Default to 3",
+                "properties": {},
+                "default": 3,
+                "required": []
+              },
+              "confidenceScoreThreshold": {
+                "type": "number",
+                "description": "(Optional) Minimum threshold confidence score for answers, value ranges from 0 to 1. Default value is 0.7",
+                "properties": {},
+                "default": 0.7,
+                "required": []
+              },
+              "questionOnly": {
+                "type": "boolean",
+                "description": "(Optional) Answer based on the question only, default false",
+                "properties": {},
+                "default": false,
+                "required": []
+              },
+              "includeUnstructuredSources": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "(Optional) Flag to enable query over unstructured sources, default true",
+                "properties": {},
+                "default": true,
+                "required": []
+              }
+            },
+            "required": [
+              "question",
+              "project"
+            ]
+          },
+          "name": "get_answers_from_knowledge_base",
+          "annotations": {},
+          "description": "This tool answers questions using the configured knowledge bases.\nIt requires the following inputs: the question text, the target project, and the deployment name (either test or production).\nOptional parameters include the maximum number of answers to return, the minimum confidence score threshold, the ranker type, and a boolean flag indicating whether unstructured data sources should be queried.\nResults are returned as a JSON array of answer objects, each containing the answer text, its confidence score, an array of alternative questions considered, and the source of the answer."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The text that needs to be used for analysis",
+                "properties": {},
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              },
+              "countryHint": {
+                "type": "string",
+                "description": "(Optional) Country hint represented as ISO 3166-1 alpha-2 two-letter country code",
+                "properties": {},
+                "default": null,
+                "required": []
+              }
+            },
+            "required": [
+              "message"
+            ]
+          },
+          "name": "detect_language_from_text",
+          "annotations": {},
+          "description": "This tool detects and returns language detected. The input is the message for which we want to detect the language.It also accepts an optional model version and country hint. The result is a json response containing the detected language."
+        },
+        {
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The text that needs to be used for analysis",
+                "properties": {},
+                "required": []
+              },
+              "modelVersion": {
+                "type": "string",
+                "description": "(Optional) Model version to be used.",
+                "properties": {},
+                "default": "latest",
+                "required": []
+              },
+              "language": {
+                "type": "string",
+                "description": "(Optional) The language of the input text.  The language requested should be according to the 2 letter ISO 639-1 standard.",
+                "properties": {},
+                "default": "en",
+                "required": []
+              }
+            },
+            "required": [
+              "message"
+            ]
+          },
+          "name": "extract_key_phrases_from_text",
+          "annotations": {},
+          "description": "This tool extracts key phrases from the input text.It also accepts an optional model version and language. The result is a json response containing the extracted key phrases."
+        }
+      ],
+      "type": "mcp_list_tools",
+      "error": null,
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "TextAnalysisAgent",
+        "version": "7"
+      },
+      "response_id": "resp_0551936fdd877be6006a48976ba5f08194af968dfa731dee87"
+    },
+    {
+      "id": "rs_0551936fdd877be6006a48976cb0ac8194bda92c9511db3295",
+      "summary": [],
+      "type": "reasoning",
+      "content": [],
+      "encrypted_content": null,
+      "status": null,
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "TextAnalysisAgent",
+        "version": "7"
+      },
+      "response_id": "resp_0551936fdd877be6006a48976ba5f08194af968dfa731dee87"
+    },
+    {
+      "id": "mcp_0551936fdd877be6006a48976d3f048194a5447d27ae3c6bd1",
+      "arguments": "{\"message\":\"I booked my flight to Paris in July with Margie's Travel, and it was fantastic!\",\"language\":\"en\"}",
+      "name": "extract_named_entities_from_text",
+      "server_label": "AzureLanguageinFoundryTools",
+      "type": "mcp_call",
+      "approval_request_id": null,
+      "error": null,
+      "output": "{\"content\":{\"type\":\"text\",\"text\":\"[{\\\"id\\\":\\\"1\\\",\\\"warnings\\\":[],\\\"entities\\\":[{\\\"text\\\":\\\"Paris\\\",\\\"category\\\":\\\"Location\\\",\\\"subcategory\\\":\\\"City\\\",\\\"offset\\\":22,\\\"length\\\":5,\\\"confidenceScore\\\":1.0,\\\"type\\\":\\\"City\\\",\\\"tags\\\":[{\\\"name\\\":\\\"City\\\",\\\"confidenceScore\\\":1.0},{\\\"name\\\":\\\"GPE\\\",\\\"confidenceScore\\\":1.0},{\\\"name\\\":\\\"Location\\\",\\\"confidenceScore\\\":1.0}]},{\\\"text\\\":\\\"July\\\",\\\"category\\\":\\\"DateTime\\\",\\\"subcategory\\\":\\\"DateRange\\\",\\\"offset\\\":31,\\\"length\\\":4,\\\"confidenceScore\\\":0.8,\\\"type\\\":\\\"DateRange\\\",\\\"tags\\\":[{\\\"name\\\":\\\"DateRange\\\",\\\"confidenceScore\\\":0.8},{\\\"name\\\":\\\"DateTime\\\",\\\"confidenceScore\\\":0.8}],\\\"metadata\\\":{\\\"spanValues\\\":[{\\\"begin\\\":\\\"2025-07-01\\\",\\\"end\\\":\\\"2025-08-01\\\",\\\"timex\\\":\\\"XXXX-07\\\"},{\\\"begin\\\":\\\"2026-07-01\\\",\\\"end\\\":\\\"2026-08-01\\\",\\\"timex\\\":\\\"XXXX-07\\\"}]}},{\\\"text\\\":\\\"Margie's Travel\\\",\\\"category\\\":\\\"Organization\\\",\\\"offset\\\":41,\\\"length\\\":15,\\\"confidenceScore\\\":1.0,\\\"type\\\":\\\"Organization\\\",\\\"tags\\\":[{\\\"name\\\":\\\"Organization\\\",\\\"confidenceScore\\\":1.0}]}]}]\"}}\n",
+      "status": "completed",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "TextAnalysisAgent",
+        "version": "7"
+      },
+      "response_id": "resp_0551936fdd877be6006a48976ba5f08194af968dfa731dee87"
+    },
+    {
+      "id": "mcp_0551936fdd877be6006a48976ec94c8194a1fff757c764d03f",
+      "arguments": "{\"message\":\"I booked my flight to Paris in July with Margie's Travel, and it was fantastic!\",\"language\":\"en\",\"opinionMining\":true}",
+      "name": "detect_sentiment_from_text",
+      "server_label": "AzureLanguageinFoundryTools",
+      "type": "mcp_call",
+      "approval_request_id": null,
+      "error": null,
+      "output": "[{\"id\":\"1\",\"warnings\":[],\"confidenceScores\":{\"positive\":1.0},\"sentences\":[{\"text\":\"I booked my flight to Paris in July with Margie's Travel, and it was fantastic!\",\"confidenceScores\":{\"positive\":1.0},\"length\":79,\"targets\":[{\"confidenceScores\":{\"positive\":1.0},\"offset\":12,\"length\":6,\"text\":\"flight\",\"relations\":[{\"ref\":\"#/documents/0/sentences/0/assessments/0\"}]},{\"confidenceScores\":{\"positive\":1.0},\"offset\":41,\"length\":15,\"text\":\"Margie's Travel\",\"relations\":[{\"ref\":\"#/documents/0/sentences/0/assessments/0\"}]}],\"assessments\":[{\"confidenceScores\":{\"positive\":1.0},\"offset\":69,\"length\":9,\"text\":\"fantastic\"}]}]}]\n",
+      "status": "completed",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "TextAnalysisAgent",
+        "version": "7"
+      },
+      "response_id": "resp_0551936fdd877be6006a48976ba5f08194af968dfa731dee87"
+    },
+    {
+      "id": "msg_0551936fdd877be6006a48976ff7f88194987013e04ac25a8b",
+      "content": [
+        {
+          "annotations": [],
+          "text": "Here’s what the review mentions:\n\n**Entities**\n- **Paris** — Location/City\n- **July** — Date\n- **Margie’s Travel** — Organization\n\n**Sentiment**\n- **Positive** — The review is clearly positive, with “fantastic!” showing strong positive sentiment.\n\nIf you want, I can also format this as a table.",
+          "type": "output_text",
+          "logprobs": []
+        }
+      ],
+      "role": "assistant",
+      "status": "completed",
+      "type": "message",
+      "phase": "final_answer",
+      "agent_reference": {
+        "type": "agent_reference",
+        "name": "TextAnalysisAgent",
+        "version": "7"
+      },
+      "response_id": "resp_0551936fdd877be6006a48976ba5f08194af968dfa731dee87"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "temperature": 1.0,
+  "tool_choice": "auto",
+  "tools": [
+    {
+      "type": "web_search",
+      "filters": null,
+      "search_context_size": "medium",
+      "user_location": {
+        "city": null,
+        "country": "US",
+        "region": null,
+        "timezone": null,
+        "type": "approximate"
+      },
+      "return_token_budget": "default",
+      "search_content_types": [
+        "text"
+      ]
+    },
+    {
+      "server_label": "AzureLanguageinFoundryTools",
+      "type": "mcp",
+      "allowed_tools": {
+        "read_only": null,
+        "tool_names": []
+      },
+      "authorization": null,
+      "connector_id": null,
+      "defer_loading": null,
+      "headers": null,
+      "require_approval": "never",
+      "server_description": null,
+      "server_url": "https://p20261i373-5874-resource.cognitiveservices.azure.com/language/mcp?api-version=2025-11-15-preview",
+      "tunnel_id": null,
+      "project_connection_id": "AzureLanguageinFoundryTools"
+    }
+  ],
+  "top_p": 0.98,
+  "background": false,
+  "completed_at": 1783142256.0,
+  "conversation": null,
+  "max_output_tokens": null,
+  "max_tool_calls": null,
+  "moderation": null,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": "in_memory",
+  "reasoning": {
+    "context": "current_turn",
+    "effort": "low",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "top_logprobs": 0,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 7693,
+    "input_tokens_details": {
+      "cached_tokens": 6784
+    },
+    "output_tokens": 235,
+    "output_tokens_details": {
+      "reasoning_tokens": 51
+    },
+    "total_tokens": 7928
+  },
+  "user": null,
+  "agent_reference": {
+    "type": "agent_reference",
+    "name": "TextAnalysisAgent",
+    "version": "7"
+  },
+  "content_filters": [
+    {
+      "blocked": false,
+      "source_type": "prompt",
+      "content_filter_results": {
+        "sexual": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "hate": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "violence": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "self_harm": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "jailbreak": {
+          "filtered": false,
+          "detected": false
+        }
+      },
+      "content_filter_raw": [],
+      "content_filter_offsets": {
+        "start_offset": 0,
+        "end_offset": 19703,
+        "check_offset": 0
+      }
+    },
+    {
+      "blocked": false,
+      "source_type": "completion",
+      "content_filter_results": {
+        "sexual": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "hate": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "violence": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "self_harm": {
+          "filtered": false,
+          "severity": "safe"
+        },
+        "protected_material_text": {
+          "filtered": false,
+          "detected": false
+        },
+        "protected_material_code": {
+          "filtered": false,
+          "detected": false
+        }
+      },
+      "content_filter_raw": [],
+      "content_filter_offsets": {
+        "start_offset": 0,
+        "end_offset": 547,
+        "check_offset": 0
+      }
+    }
+  ]
+}

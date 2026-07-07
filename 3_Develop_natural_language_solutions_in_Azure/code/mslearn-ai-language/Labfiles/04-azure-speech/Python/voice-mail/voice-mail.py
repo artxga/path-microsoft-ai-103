@@ -1,0 +1,96 @@
+from dotenv import load_dotenv
+import os
+from playsound3 import playsound
+from azure.identity import DefaultAzureCredential
+import azure.cognitiveservices.speech as speech_sdk
+
+def main():
+    try:
+        # Clear the console
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+        # Get Configuration Settings
+        load_dotenv()
+        foundry_endpoint = os.getenv('FOUNDRY_ENDPOINT')
+        foundry_key = os.getenv('FOUNDRY_KEY')
+
+        # Create speech_config using Entra ID authentication
+        credential = DefaultAzureCredential()
+        # se dejó de usar credential ya que hacia fallar a la transcripcion
+        speech_config = speech_sdk.SpeechConfig(
+            endpoint=foundry_endpoint, 
+            subscription=foundry_key)
+
+        # Loop until user quits
+        inputText = ""
+        while inputText.lower() != "3":
+            inputText = input("Choose an option:\n1: Record a greeting\n2: Transcribe messages\n3: Exit\n")
+            if inputText != "3":
+                if inputText == "1":
+                    record_greeting(speech_config)
+                elif inputText == "2":
+                    transcribe_messages(speech_config)
+                elif inputText == "3":
+                    print("Exiting...")
+                    return
+                else:
+                    print("Invalid option, please try again.")
+
+    except Exception as ex:
+        print(ex)
+
+# record_greeting function
+def record_greeting(speech_config):
+    print("Recording greeting...")
+
+    # Get greeting message from user
+    greeting_message = input("Enter your greeting message: ")
+
+
+    # Synthesize the greeting message to an audio file
+    output_file = "greeting.wav"
+    audio_config = speech_sdk.audio.AudioOutputConfig(filename=output_file)
+
+    speech_config.speech_synthesis_voice_name = "en-US-Serena:DragonHDLatestNeural"
+
+    speech_synthesizer = speech_sdk.SpeechSynthesizer(speech_config, audio_config)
+
+    result = speech_synthesizer.speak_text_async(greeting_message).get()
+
+    if result.reason == speech_sdk.ResultReason.SynthesizingAudioCompleted:
+        print(f"Greeting recorded and saved to {output_file}")
+        speech_synthesizer = None
+    else:
+        print("Failed to record greeting: {}".format(result.reason))
+
+
+# transcribe_messages function
+def transcribe_messages(speech_config):
+    print("Transcribing messages...")
+    
+    messages_folder = 'messages'
+    for file_name in os.listdir(messages_folder):
+        if file_name.endswith('.wav'):
+            print(f"\nTranscribing {file_name}...")
+            file_path = os.path.join(messages_folder, file_name)
+            playsound(file_path)
+
+            # Transcribe the audio file
+            audio_config = speech_sdk.audio.AudioConfig(filename=file_path)
+            speech_recognizer = speech_sdk.SpeechRecognizer(speech_config, audio_config, "en-US")
+
+            result = speech_recognizer.recognize_once_async().get()
+            if result.reason == speech_sdk.ResultReason.RecognizedSpeech:
+                print("Transcription: {}".format(result.text))
+            elif result.reason == speech_sdk.ResultReason.Canceled:
+                cancellation_details = speech_sdk.CancellationDetails(result)
+                print(f"Failed to transcribe: {cancellation_details.reason}")
+                
+                # Acceso seguro a las propiedades en el SDK de Python
+                print(f"Error Details: {cancellation_details.error_details}")
+            else:
+                print("Failed to transcribe: {}".format(result.reason))
+
+
+if __name__ == "__main__":
+    main()
